@@ -12,6 +12,8 @@ async def go():
 			await session.disconnect()
 		except telethon.errors.rpcerrorlist.PhoneNumberBannedError:
 			print('This number is banned, skipping...')
+		except telethon.errors.rpcerrorlist.ApiIdInvalidError:
+			print('Bad API ID and API Hash pair, skipping...\napi id = {}\napi hash = {}'.format(acc['api_id'], acc['api_hash']))
 
 asyncio.get_event_loop().run_until_complete(go())
 
