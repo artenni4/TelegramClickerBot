@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import selenium.common.exceptions 
 import urllib.request
+from urllib.request import Request
 import time
 import re
 import asyncio
@@ -180,7 +181,7 @@ async def main(browser, accounts_list_slice):
 
 				try: 
 					#check for captcha
-					url_site = urllib.request.urlopen(visit_url)
+					url_site = urllib.request.urlopen(Request(visit_url, headers={'User-Agent' : 'Mozilla/5.0'}))
 					captcha_str = url_site.read().decode('utf-8')
 					url_site.close()
 					if not re.search(r'reCAPTCHA', captcha_str):
@@ -201,8 +202,8 @@ async def main(browser, accounts_list_slice):
 					await skip_task(log_data['phone'], 'Connection reset. Skipping...', for_skip_task)
 				except ConnectionRefusedError:
 					await skip_task(log_data['phone'], 'Connection refused. Skipping...', for_skip_task)
-				except urllib.error.HTTPError:
-					await skip_task(log_data['phone'], 'Can not access the site. Skipping...', for_skip_task)
+				except urllib.error.HTTPError as e:
+					await skip_task(log_data['phone'], 'Can not access the site. Skipping...' + str(e.reason), for_skip_task)
 				except urllib.error.URLError:
 					await skip_task(log_data['phone'], 'Bad certificate. Skipping...', for_skip_task)
 				except UnicodeDecodeError:
@@ -223,7 +224,7 @@ def browser_setup():
 	#make browser headless
 	print('Starting headless browser')
 	options = webdriver.firefox.options.Options()
-	options.headless = True
+	options.headless = False # True or False
 	#capabilites = {'browserName': 'chrome'}
 	browser = webdriver.Firefox(options=options)	
 	browser.implicitly_wait(30)
