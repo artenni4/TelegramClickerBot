@@ -224,7 +224,7 @@ def browser_setup():
 	#make browser headless
 	print('Starting headless browser')
 	options = webdriver.firefox.options.Options()
-	options.headless = False # True or False
+	options.headless = True # True or False
 	#capabilites = {'browserName': 'chrome'}
 	browser = webdriver.Firefox(options=options)	
 	browser.implicitly_wait(30)
